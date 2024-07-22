@@ -46,10 +46,14 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
 void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label) {
+    // 文字列の表示
+    Novice::ScreenPrintf(x, y - kRowHeight, "%s", label);
+
+    // 行列の要素を表示
     for (int row = 0; row < 4; ++row) {
         for (int column = 0; column < 4; ++column) {
             Novice::ScreenPrintf(
-                x + column * kColumnWidth, y + row * kRowHeight, "%6.02f", matrix.m[row][column], label);
+                x + column * kColumnWidth, y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
         }
     }
 }
