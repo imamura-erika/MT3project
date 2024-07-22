@@ -16,6 +16,7 @@
     <ProjectGuid>{02770354-0f24-4b30-81ed-89a3fa40f1af}</ProjectGuid>
     <RootNamespace>MT3project</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>00_02_3次元への拡張(行列)</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">

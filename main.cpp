@@ -162,10 +162,14 @@ Matrix4x4 MakeIdentity4x4() {
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
 void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label) {
+    // 文字列の表示
+    Novice::ScreenPrintf(x, y - kRowHeight, "%s", label);
+
+    // 行列の要素を表示
     for (int row = 0; row < 4; ++row) {
         for (int column = 0; column < 4; ++column) {
             Novice::ScreenPrintf(
-                x + column * kColumnWidth, y + row * kRowHeight, "%6.02f", matrix.m[row][column], label);
+                x + column * kColumnWidth, y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
         }
     }
 }
@@ -228,14 +232,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ///
 
         // 数値表示
-        MatrixScreenPrintf(0, 0, resultAdd, "Add"); // 行列の加法
-        MatrixScreenPrintf(0, kRowHeight * 5, resultSubtract, "Subtract"); // 行列の減法
-        MatrixScreenPrintf(0, kRowHeight * 5 * 2, resultMultiply, "Multiply"); // 行列の積
-        MatrixScreenPrintf(0, kRowHeight * 5 * 3, inverseM1, "inverseM1"); // 逆行列
-        MatrixScreenPrintf(0, kRowHeight * 5 * 4, inverseM2, "inverseM2");
-        MatrixScreenPrintf(kColumnWidth * 5, 0, transposeM1, "transposeM1"); // 転置行列
-        MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5, transposeM2, "transposeM2");
-        MatrixScreenPrintf(kColumnWidth * 5, kRowHeight * 5 * 2, identity, "identity"); // 単位行列
+        MatrixScreenPrintf(0, kRowHeight, resultAdd, "Add"); // 行列の加法
+        MatrixScreenPrintf(0, kRowHeight * 6, resultSubtract, "Subtract"); // 行列の減法
+        MatrixScreenPrintf(0, kRowHeight * 6 * 2, resultMultiply, "Multiply"); // 行列の積
+        MatrixScreenPrintf(0, kRowHeight * 6 * 3, inverseM1, "inverseM1"); // 逆行列
+        MatrixScreenPrintf(0, kRowHeight * 6 * 4, inverseM2, "inverseM2");
+        MatrixScreenPrintf(kColumnWidth * 6, kRowHeight, transposeM1, "transposeM1"); // 転置行列
+        MatrixScreenPrintf(kColumnWidth * 6, kRowHeight * 6, transposeM2, "transposeM2");
+        MatrixScreenPrintf(kColumnWidth * 6, kRowHeight * 6 * 2, identity, "identity"); // 単位行列
 
         ///
         /// ↑描画処理ここまで
