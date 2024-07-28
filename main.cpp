@@ -22,7 +22,7 @@ const Vector3 kLocalVertices[3] = {
 
 // クロス積
 Vector3 Cross(const Vector3& v1, const Vector3& v2) {
-	return { v1.y * v2.z - v1.z * v2.y,v1.z * v2.x - v1.x * v2.z,v1.x * v2.y - v1.y * v2.x };
+	return { v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x };
 }
 
 // ベクトルの変換
@@ -67,12 +67,12 @@ Matrix4x4 Inverse(const Matrix4x4& m) {
 		+ m.m[0][1] * m.m[1][3] * m.m[2][2] * m.m[3][0];
 
 	float recpDeterminant = 1.0f / determinant;
-	Matrix4x4 result = {};
+	Matrix4x4 result;
 	result.m[0][0] = (m.m[1][1] * m.m[2][2] * m.m[3][3] + m.m[1][2] * m.m[2][3] * m.m[3][1] +
 		m.m[1][3] * m.m[2][1] * m.m[3][2] - m.m[1][3] * m.m[2][2] * m.m[3][1] -
 		m.m[1][2] * m.m[2][1] * m.m[3][3] - m.m[1][1] * m.m[2][3] * m.m[3][2]) * recpDeterminant;
 
-	result.m[0][1] = (-m.m[0][1] * m.m[2][2] * m.m[3][3] - m.m[0][2] * m.m[2][3] * m.m[3][1] +
+	result.m[0][1] = (-m.m[0][1] * m.m[2][2] * m.m[3][3] - m.m[0][2] * m.m[2][3] * m.m[3][1] -
 		m.m[0][3] * m.m[2][1] * m.m[3][2] + m.m[0][3] * m.m[2][2] * m.m[3][1] +
 		m.m[0][2] * m.m[2][1] * m.m[3][3] + m.m[0][1] * m.m[2][3] * m.m[3][2]) * recpDeterminant;
 
@@ -92,7 +92,7 @@ Matrix4x4 Inverse(const Matrix4x4& m) {
 		m.m[0][3] * m.m[2][0] * m.m[3][2] - m.m[0][3] * m.m[2][2] * m.m[3][0] -
 		m.m[0][2] * m.m[2][0] * m.m[3][3] - m.m[0][0] * m.m[2][3] * m.m[3][2]) * recpDeterminant;
 
-	result.m[1][2] = (-m.m[0][0] * m.m[3][2] * m.m[3][3] - m.m[0][2] * m.m[1][3] * m.m[3][0] -
+	result.m[1][2] = (-m.m[0][0] * m.m[1][2] * m.m[3][3] - m.m[0][2] * m.m[1][3] * m.m[3][0] -
 		m.m[0][3] * m.m[1][0] * m.m[3][2] + m.m[0][3] * m.m[1][2] * m.m[3][0] +
 		m.m[0][2] * m.m[1][0] * m.m[3][3] + m.m[0][0] * m.m[1][3] * m.m[3][2]) * recpDeterminant;
 
@@ -220,7 +220,7 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 }
 
 // 数値表示用 Vector
-static const int kVectorRowHeight = 20;
+//static const int kVectorRowHeight = 20;
 void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
 	Novice::ScreenPrintf(x, y, "%.2f %.2f %.2f %s", vector.x, vector.y, vector.z, label);
 }
@@ -230,6 +230,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, 1280, 720);
+
+	Vector3 rotate{ 0.0f, 0.0f, 0.0f };
+	Vector3 translate{ 0.0f, 0.0f, 0.0f };
 
 	// キー入力結果を受け取る箱
 	char keys[256] = {0};
@@ -248,13 +251,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		Vector3 rotate{};
-		Vector3 translate{};
-		// WSキーで前後に、ADキーで左右に三角形を動かす、Y軸回転をさせる。という処理をここに書く。translateとrotateの値を変更すれば良い
+		// 三角形の移動
+		if (keys[DIK_W]) { // Wキーを押している間
+			translate.z -= 0.1f; // 前に移動
+		}
+		if (keys[DIK_S]) { // Sキーを押している間
+			translate.z += 0.1f; // 後ろに移動
+		}
+		if (keys[DIK_A]) { // Aキーを押している間
+			translate.x -= 0.1f; // 左に移動
+		}
+		if (keys[DIK_D]) { // Dキーを押している間
+			translate.x += 0.1f; // 右に移動
+		}
+		rotate.y += 0.1f; // 自動でY軸回転
 
 
-		Vector3 v1{ 1.2f,-3.9f,2.5f };
-		Vector3 v2{ 2.8f,0.4f,-1.3f };
+		Vector3 v1{ 1.2f, -3.9f, 2.5f };
+		Vector3 v2{ 2.8f, 0.4f, -1.3f };
 		Vector3 cross = Cross(v1, v2);
 		
 		Vector3 cameraPosition = { 0.0f, 0.0f, -5.0f };
@@ -282,29 +296,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		VectorScreenPrintf(0, kVectorRowHeight, cross, "Cross");
+		VectorScreenPrintf(0, 0, cross, "Cross");
 
-		void DrawTriangle(
-			const Triangle & triangle, const Matrix4x4 & worldViewProjectionMatrix, const Matrix4x4 & viewportMatrix, uint32_t color) {
-
-			Vector3 screenVertices[3] = {
-				Transform(Transform(triangle.vertices[0], worldViewProjectionMatrix), viewportMatrix),
-				Transform(Transform(triangle.vertices[1], worldViewProjectionMatrix), viewportMatrix),
-				Transform(Transform(triangle.vertices[2], worldViewProjectionMatrix), viewportMatrix) };
-			
-			Novice::DrawTriangle(
-				int(screenVertices[0].x), int(screenVertices[0].y),
-				int(screenVertices[1].x), int(screenVertices[1].y),
-				int(screenVertices[2].x), int(screenVertices[2].y),
-				RED, kFillModeSolid
-			);
-		}
-
-
-		//Novice::DrawTriangle(
-		//	int(screenVertices[0].x), int(screenVertices[0].y), int(screenVetices[1].x), int(screenVertices[1].y),
-		//	int(screenVertices[2].x), int(screenVertices[2].y), RED, kFillModeSolid
-		//);
+		Novice::DrawTriangle(
+			int(screenVertices[0].x), int(screenVertices[0].y), int(screenVertices[1].x), int(screenVertices[1].y),
+			int(screenVertices[2].x), int(screenVertices[2].y), RED, kFillModeSolid
+		);
 		
 		///
 		/// ↑描画処理ここまで
